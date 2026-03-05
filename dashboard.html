@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Admin Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .bg-dashboard {
+            background-color: #f8fafc;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0.03) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.03) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.03) 0, transparent 50%);
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+        }
+
+        .table-container {
+            background: white;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Custom Scrollbar for table */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Status Badge Animations */
+        @keyframes pulse-soft {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .status-badge {
+            animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-dashboard text-slate-800 antialiased min-h-screen">
+
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center space-x-3">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span class="font-bold text-xl tracking-tight text-slate-900">Event<span
+                                class="text-indigo-600">Admin</span></span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm font-medium text-slate-500 hidden sm:block">
+                        <span id="current-time"
+                            class="bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Header Section -->
+        <div class="sm:flex sm:items-center sm:justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Access Control Dashboard</h1>
+                <p class="mt-1 text-sm text-slate-500">Real-time attendee management and monitoring.</p>
+            </div>
+            <div class="mt-4 sm:mt-0">
+                <div
+                    class="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-200 text-sm font-semibold shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 status-badge"></span>
+                    <span>Live Updates Active</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
+            <!-- Total Registered -->
+            <div class="stat-card rounded-2xl p-6 relative overflow-hidden group">
+                <div
+                    class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br from-indigo-100 to-indigo-50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-300">
+                </div>
+                <div class="relative">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-xl bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-4 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-slate-500 truncate">Total Registered</dt>
+                                <dd class="flex items-baseline">
+                                    <div class="text-3xl font-bold text-slate-900 tracking-tight" id="stat-total">0
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Checked-In -->
+            <div class="stat-card rounded-2xl p-6 relative overflow-hidden group">
+                <div
+                    class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-300">
+                </div>
+                <div class="relative">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4v6a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2h-2M9 12H4" />
+                            </svg>
+                        </div>
+                        <div class="ml-4 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-slate-500 truncate">Checked-In</dt>
+                                <dd class="flex items-baseline">
+                                    <div class="text-3xl font-bold text-slate-900 tracking-tight" id="stat-checked-in">0
+                                    </div>
+                                    <div class="ml-2 text-sm font-medium text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100"
+                                        id="stat-percent">0%</div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remaining -->
+            <div class="stat-card rounded-2xl p-6 relative overflow-hidden group">
+                <div
+                    class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-300">
+                </div>
+                <div class="relative">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-xl bg-amber-50 text-amber-600 ring-1 ring-amber-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-4 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-slate-500 truncate">Awaiting Entry</dt>
+                                <dd class="flex items-baseline">
+                                    <div class="text-3xl font-bold text-slate-900 tracking-tight" id="stat-remaining">0
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-container rounded-2xl overflow-hidden flex flex-col">
+            <!-- Table Controls -->
+            <div class="p-5 border-b border-slate-200 bg-white sm:flex sm:items-center sm:justify-between">
+                <h3 class="text-lg leading-6 font-bold text-slate-900">Guest Directory</h3>
+                <div class="mt-3 sm:mt-0 sm:ml-4">
+                    <div class="relative rounded-xl shadow-sm max-w-md w-full sm:w-80">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input type="text" id="search-input"
+                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-slate-300 rounded-xl py-2.5 bg-slate-50 border transition-colors"
+                            placeholder="Search by name or email...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Body -->
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="min-w-full divide-y divide-slate-200 border-collapse">
+                    <thead class="bg-slate-50/80 backdrop-blur-sm sticky top-0 z-10">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/3">
+                                Guest Details</th>
+                            <th scope="col"
+                                class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/4">
+                                Status</th>
+                            <th scope="col"
+                                class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">
+                                Check-in Time</th>
+                            <th scope="col"
+                                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/6">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="guests-table-body" class="bg-white divide-y divide-slate-100">
+                        <!-- Loading State -->
+                        <tr id="loading-row">
+                            <td colspan="4" class="px-6 py-12 text-center">
+                                <svg class="animate-spin mx-auto h-8 w-8 text-indigo-500 mb-3"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                <p class="text-sm text-slate-500 font-medium">Loading guest list...</p>
+                            </td>
+                        </tr>
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State (Hidden normally) -->
+            <div id="empty-state" class="hidden px-6 py-12 text-center bg-white border-t border-slate-100">
+                <div class="mx-auto w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                </div>
+                <h3 class="text-sm font-semibold text-slate-900">No guests found</h3>
+                <p class="mt-1 text-sm text-slate-500">Try adjusting your search criteria.</p>
+            </div>
+
+            <div
+                class="p-4 border-t border-slate-200 bg-slate-50 sm:flex sm:items-center sm:justify-between text-sm text-slate-500">
+                <div id="table-info">Showing all records</div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // IMPORTANT: Replace this with your actual Firebase config!
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // UI Elements
+        const tableBody = document.getElementById('guests-table-body');
+        const loadingRow = document.getElementById('loading-row');
+        const searchInput = document.getElementById('search-input');
+        const emptyState = document.getElementById('empty-state');
+        const statTotal = document.getElementById('stat-total');
+        const statCheckedIn = document.getElementById('stat-checked-in');
+        const statPercent = document.getElementById('stat-percent');
+        const statRemaining = document.getElementById('stat-remaining');
+        const tableInfo = document.getElementById('table-info');
+
+        // Data State
+        let allGuests = [];
+        let filteredGuests = [];
+
+        // Formatting Helpers
+        const formatDate = (timestamp) => {
+            if (!timestamp) return '-';
+            // Handle Firestore Timestamp
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return new Intl.DateTimeFormat('en-US', {
+                hour: 'numeric', minute: 'numeric', second: 'numeric',
+                hour12: true, month: 'short', day: 'numeric'
+            }).format(date);
+        };
+
+        const getAvatarMarkup = (name) => {
+            const initial = name ? name.charAt(0).toUpperCase() : '?';
+            const colors = ['bg-red-100 text-red-600', 'bg-blue-100 text-blue-600', 'bg-emerald-100 text-emerald-600', 'bg-purple-100 text-purple-600', 'bg-amber-100 text-amber-600', 'bg-indigo-100 text-indigo-600'];
+            // simple deterministic color based on char code
+            const colorClass = colors[initial.charCodeAt(0) % colors.length];
+            return `<div class="h-10 w-10 rounded-full flex items-center justify-center font-bold shadow-sm ${colorClass}">${initial}</div>`;
+        };
+
+        // Render Table Row
+        const renderRow = (guest) => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-50 transition-colors group';
+
+            const isCheckedIn = guest.hasCheckedIn === true;
+
+            // Name & Email Column
+            const detailsCol = `
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10">
+                            ${getAvatarMarkup(guest.name)}
+                        </div>
+                        <div class="ml-4 max-w-[200px] sm:max-w-none">
+                            <div class="text-sm font-semibold text-slate-900 truncate">${guest.name || 'Unknown'}</div>
+                            <div class="text-sm text-slate-500 truncate mt-0.5">${guest.email || 'No email provided'}</div>
+                        </div>
+                    </div>
+                </td>
+            `;
+
+            // Status Column
+            const statusBadgeConfig = isCheckedIn
+                ? { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', label: 'Checked In', dot: 'bg-emerald-500' }
+                : { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', label: 'Awaiting', dot: 'bg-amber-500' };
+
+            const statusCol = `
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusBadgeConfig.bg} ${statusBadgeConfig.text} border ${statusBadgeConfig.border}">
+                        <span class="w-1.5 h-1.5 rounded-full ${statusBadgeConfig.dot} mr-1.5 ${isCheckedIn ? '' : 'animate-pulse'}"></span>
+                        ${statusBadgeConfig.label}
+                    </span>
+                </td>
+            `;
+
+            // Time Column
+            const timeCol = `
+                <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell text-sm text-slate-500">
+                    ${isCheckedIn ? `<span class="bg-slate-100 px-2.5 py-1 rounded-md text-slate-600 font-medium">${formatDate(guest.checkInTime)}</span>` : '<span class="text-slate-400 italic">Not recorded</span>'}
+                </td>
+            `;
+
+            // Action Column
+            const actionCol = `
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    ${!isCheckedIn ? `
+                        <button class="manual-checkin-btn inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-bold rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105" data-id="${guest.id}">
+                            <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Check In
+                        </button>
+                    ` : `
+                        <span class="text-slate-400 select-none mr-2 font-medium">Completed</span>
+                    `}
+                </td>
+            `;
+
+            row.innerHTML = detailsCol + statusCol + timeCol + actionCol;
+            return row;
+        };
+
+        // Update UI
+        const updateUI = () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            // Filter data
+            filteredGuests = allGuests.filter(guest => {
+                const nameMatch = (guest.name || '').toLowerCase().includes(searchTerm);
+                const emailMatch = (guest.email || '').toLowerCase().includes(searchTerm);
+                return nameMatch || emailMatch;
+            });
+
+            // Update Stats
+            const total = allGuests.length;
+            const checkedIn = allGuests.filter(g => g.hasCheckedIn === true).length;
+            const remaining = total - checkedIn;
+            const percent = total > 0 ? Math.round((checkedIn / total) * 100) : 0;
+
+            // Animate number changes (simple direct update for now)
+            statTotal.textContent = total;
+            statCheckedIn.textContent = checkedIn;
+            statRemaining.textContent = remaining;
+            statPercent.textContent = `${percent}%`;
+
+            // Update Table
+            tableBody.innerHTML = '';
+
+            if (filteredGuests.length === 0) {
+                if (allGuests.length > 0) {
+                    emptyState.classList.remove('hidden');
+                    tableInfo.textContent = `Found 0 results for "${searchTerm}"`;
+                }
+            } else {
+                emptyState.classList.add('hidden');
+                tableInfo.textContent = `Showing ${filteredGuests.length} of ${total} records`;
+
+                filteredGuests.forEach(guest => {
+                    tableBody.appendChild(renderRow(guest));
+                });
+
+                // Attach Event Listeners to New Buttons
+                document.querySelectorAll('.manual-checkin-btn').forEach(btn => {
+                    btn.addEventListener('click', handleManualCheckin);
+                });
+            }
+        };
+
+        // Handle Manual Check-in
+        const handleManualCheckin = async (e) => {
+            const btn = e.currentTarget;
+            const guestId = btn.getAttribute('data-id');
+            const originalContent = btn.innerHTML;
+
+            // Loading state
+            btn.innerHTML = `<svg class="animate-spin h-4 w-4 mr-1 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing`;
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            try {
+                const docRef = doc(db, 'guests', guestId);
+                await updateDoc(docRef, {
+                    hasCheckedIn: true,
+                    checkInTime: new Date()
+                });
+                // Note: The UI will update automatically via onSnapshot!
+            } catch (error) {
+                console.error("Error updating document: ", error);
+                alert("Failed to manual check-in. Check Firebase permissions.");
+                // Restore button on failure
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        };
+
+        // Setup Firebase Real-time Listener
+        const setupListener = () => {
+            const q = query(collection(db, "guests"), orderBy("name"));
+
+            onSnapshot(q, (snapshot) => {
+                if (loadingRow) loadingRow.remove();
+
+                allGuests = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                updateUI();
+            }, (error) => {
+                console.error("Real-time listener error:", error);
+                loadingRow.innerHTML = `<td colspan="4" class="px-6 py-8 text-center text-red-500 font-medium">Error loading data. Check database connections and rules.</td>`;
+            });
+        };
+
+        // Initialize Settings
+        const init = () => {
+            // Setup Search Listener
+            searchInput.addEventListener('input', updateUI);
+
+            // Current Time interval
+            const timeEl = document.getElementById('current-time');
+            const updateTime = () => {
+                timeEl.textContent = new Intl.DateTimeFormat('en-US', {
+                    hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true
+                }).format(new Date());
+            };
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Connect to Firebase
+            setupListener();
+        };
+
+        // Boot
+        init();
+
+    </script>
+</body>
+
+</html>
