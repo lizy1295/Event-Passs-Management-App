@@ -2,7 +2,14 @@ import { useEffect, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 export default function QrScanner({ onScanSuccess, onScanError }) {
-  const scannerRef = useRef(null);
+  const onScanSuccessRef = useRef(onScanSuccess);
+  const onScanErrorRef = useRef(onScanError);
+
+  // Keep refs updated with the latest callbacks
+  useEffect(() => {
+    onScanSuccessRef.current = onScanSuccess;
+    onScanErrorRef.current = onScanError;
+  }, [onScanSuccess, onScanError]);
 
   useEffect(() => {
     // Create scanner config
@@ -22,16 +29,13 @@ export default function QrScanner({ onScanSuccess, onScanError }) {
 
     html5QrcodeScanner.render(
       (decodedText, decodedResult) => {
-        // Debounce or handle success 
-        // html5-qrcode scans very fast. The parent should handle debouncing
-        // so we don't spam the database with the same scan.
-        if (onScanSuccess) {
-           onScanSuccess(decodedText, decodedResult);
+        if (onScanSuccessRef.current) {
+          onScanSuccessRef.current(decodedText, decodedResult);
         }
       },
       (errorMessage) => {
-        if (onScanError) {
-           onScanError(errorMessage);
+        if (onScanErrorRef.current) {
+          onScanErrorRef.current(errorMessage);
         }
       }
     );
@@ -42,7 +46,7 @@ export default function QrScanner({ onScanSuccess, onScanError }) {
         console.error("Failed to clear html5QrcodeScanner. ", error);
       });
     };
-  }, [onScanSuccess, onScanError]);
+  }, []); // Empty dependency array prevents restarting the camera stream
 
   return (
     <div className="w-full max-w-sm mx-auto overflow-hidden rounded-2xl bg-white border border-slate-200/80 shadow-sm relative">

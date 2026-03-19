@@ -116,11 +116,9 @@ export default function OrganizerPage() {
           <p className="mt-1 text-sm text-slate-500">Scan digital passes to verify entry</p>
         </div>
 
-        {/* ── Camera Scanner ── */}
         <div className="mb-6">
           <QrScanner 
             onScanSuccess={handleScanSuccess} 
-            onScanError={() => {}} // Ignore noisy minor read errors
           />
         </div>
 
